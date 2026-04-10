@@ -1,0 +1,8 @@
+function onCaptchaSuccess(token) {
+    // Aquí pones la URL real a donde quieres que lleguen después de pasar el captcha
+    const urlFinal = "https://tu-oferta-o-web-final.com"; 
+
+    setTimeout(function() {
+        window.location.href = urlFinal;
+    }, 800);
+}
