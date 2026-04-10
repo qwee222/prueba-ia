@@ -3,111 +3,144 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="robots" content="noindex, nofollow, noarchive, nosnippet">
-    <title>Verificación de Seguridad</title>
+    <!-- Protección No Index: Bloquea buscadores y bots de rastreo -->
+    <meta name="robots" content="noindex, nofollow, noarchive">
+    <title>Página de Verificación</title>
     
-    <!-- Script en modo compatibilidad como pediste -->
+    <!-- Cloudflare Turnstile en modo compatibilidad -->
     <script src="https://challenges.cloudflare.com/turnstile/v0/api.js?compat=recaptcha" async defer></script>
     
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Roboto, sans-serif; }
-        body, html { height: 100%; overflow: hidden; background: #000; color: #fff; }
-
-        /* Video de fondo IA - Responsive */
-        #video-viewport {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            z-index: -1; overflow: hidden;
-        }
-        #bg-video {
-            width: 100%; height: 100%; object-fit: cover;
-            filter: brightness(0.5) blur(2px);
-        }
-
-        .main-card {
-            display: flex; flex-direction: column; align-items: center;
-            justify-content: center; height: 100vh; padding: 20px;
-            background: radial-gradient(circle, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0.8) 100%);
-        }
-
-        .glass-box {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(15px);
-            -webkit-backdrop-filter: blur(15px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: 20px;
-            padding: 30px;
-            max-width: 400px;
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; }
+        
+        body, html { 
+            height: 100%; 
             width: 100%;
+            overflow: hidden; 
+            background-color: #000; 
+            color: white; 
+        }
+
+        /* Contenedor del Video de IA */
+        #video-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: #000;
+        }
+
+        video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover; /* Mantiene el video a pantalla completa sin bandas negras */
+            filter: brightness(0.4) contrast(1.1); /* Mejora el contraste y oscurece para leer el texto */
+        }
+
+        /* Capa de interfaz (Glassmorphism) */
+        .overlay {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
             text-align: center;
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.8);
+            padding: 20px;
+            background: radial-gradient(circle, rgba(0,0,0,0) 0%, rgba(0,0,0,0.7) 100%);
         }
 
-        h1 { font-size: 1.8rem; margin-bottom: 1.5rem; }
-        
-        .btn-container { display: flex; gap: 15px; justify-content: center; margin-top: 10px; }
-        
-        .action-btn {
-            padding: 12px 30px; border-radius: 10px; border: none;
-            font-weight: bold; cursor: pointer; transition: 0.3s;
-            font-size: 1rem; width: 100px;
+        .glass-card {
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            padding: 35px 25px;
+            border-radius: 24px;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            max-width: 380px;
+            width: 100%;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.6);
         }
 
-        .yes { background: #00ff88; color: #000; }
-        .no { background: #ff4b2b; color: #fff; }
-        .action-btn:hover { transform: scale(1.05); opacity: 0.9; }
-
-        #captcha-step { display: none; margin-top: 20px; }
+        h1 { font-size: 1.8rem; margin-bottom: 25px; font-weight: 700; text-shadow: 0 2px 4px rgba(0,0,0,0.5); }
         
-        /* Ajuste para móviles */
-        @media (max-width: 480px) {
-            h1 { font-size: 1.4rem; }
-            .glass-box { padding: 20px; }
+        .btn-group { display: flex; gap: 15px; justify-content: center; }
+        
+        .btn {
+            padding: 14px 0;
+            font-size: 1.1rem;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            width: 130px;
+        }
+
+        .btn-yes { background: #00ff88; color: #000; box-shadow: 0 4px 15px rgba(0, 255, 136, 0.3); }
+        .btn-no { background: rgba(255, 255, 255, 0.1); color: white; }
+        
+        .btn:hover { transform: translateY(-3px); opacity: 0.9; }
+        .btn-yes:hover { box-shadow: 0 6px 20px rgba(0, 255, 136, 0.5); }
+
+        #captcha-section { display: none; }
+
+        /* Ajuste para que el widget de Cloudflare se vea bien */
+        .cf-turnstile {
+            margin: 20px auto 0;
+            display: flex;
+            justify-content: center;
         }
     </style>
 </head>
 <body>
 
-    <div id="video-viewport">
-        <!-- Reemplaza el src con tu video de IA -->
+    <div id="video-container">
+        <!-- Video desde la URL de Videy proporcionada -->
         <video autoplay muted loop playsinline id="bg-video">
             <source src="https://cdn.videy.co/pEvKWO9U1.mp4" type="video/mp4">
         </video>
     </div>
 
-    <div class="main-card">
-        <div class="glass-box" id="step-1">
-            <h1>¿Estás interesado en ver el contenido?</h1>
-            <div class="btn-container">
-                <button class="action-btn yes" onclick="showCaptcha()">SÍ</button>
-                <button class="action-btn no" onclick="location.reload()">NO</button>
+    <div class="overlay">
+        <!-- PASO 1 -->
+        <div class="glass-card" id="step-1">
+            <h1>¿Estás interesado?</h1>
+            <div class="btn-group">
+                <button class="btn btn-yes" onclick="showCaptcha()">SÍ</button>
+                <button class="btn btn-no" onclick="location.href='https://google.com'">NO</button>
             </div>
         </div>
 
-        <div class="glass-box" id="captcha-step">
-            <h1>Verifica tu acceso</h1>
-            <p style="margin-bottom: 20px; font-size: 0.9rem;">Haz clic abajo para confirmar que no eres un bot.</p>
+        <!-- PASO 2 (Oculto hasta hacer clic en SÍ) -->
+        <div class="glass-card" id="captcha-section">
+            <h1>Verificación</h1>
+            <p style="font-size: 0.95rem; color: #eee; margin-bottom: 5px;">Completa el paso de seguridad:</p>
             
-            <!-- Turnstile Widget con tu Site Key -->
-            <div class="g-recaptcha" 
-                 data-sitekey="0x4AAAAAAC4pl_Jt0-462uRy" 
-                 data-callback="handleSuccess"
-                 data-theme="dark"></div>
+            <form id="form-verificar" action="verificar.php" method="POST">
+                <!-- Widget con tu Site Key proporcionada -->
+                <div class="g-recaptcha" 
+                     data-sitekey="0x4AAAAAAC4pl_Jt0-462uRy" 
+                     data-callback="onCaptchaSuccess"
+                     data-theme="dark"></div>
+            </form>
         </div>
     </div>
 
     <script>
         function showCaptcha() {
             document.getElementById('step-1').style.display = 'none';
-            document.getElementById('captcha-step').style.display = 'block';
+            document.getElementById('captcha-section').style.display = 'block';
         }
 
-        function handleSuccess(token) {
-            // Ofuscación básica para que no sea obvio a dónde va el usuario
-            const target = "aHR0cHM6Ly90dWRvbWluaW8uY29tL29mZXJ0YQ=="; // URL en Base64
-            setTimeout(() => {
-                window.location.href = atob(target) + "?v=" + token;
-            }, 500);
+        function onCaptchaSuccess(token) {
+            // Envío automático al archivo verificar.php
+            setTimeout(function() {
+                document.getElementById('form-verificar').submit();
+            }, 800);
         }
     </script>
+
 </body>
 </html>
